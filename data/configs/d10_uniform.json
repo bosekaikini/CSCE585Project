@@ -1,0 +1,20 @@
+{
+  "name": "d10_uniform",
+  "dimension": 10,
+  "tickers": ["SPY", "QQQ", "DIA", "IWM", "EFA", "EEM", "TLT", "GLD", "USO", "XLE"],
+  "market_data": "data/market/parameters.csv",
+  "sampling": "uniform",
+  "seeds": [11, 22, 33, 44, 55],
+  "spot": 100.0,
+  "strike": 100.0,
+  "maturity": 1.0,
+  "rate": 0.05,
+  "volatility": 0.2,
+  "volatility_bounds": [0.1, 0.4],
+  "width": 64,
+  "depth": 3,
+  "epochs": 1000,
+  "collocation_points": 2048,
+  "learning_rate": 0.001,
+  "smooth_payoff": false
+}

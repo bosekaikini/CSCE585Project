@@ -1,0 +1,29 @@
+{
+  "source": "Yahoo Finance via yfinance",
+  "downloaded_at_utc": "2026-10-10T19:11:05.630414+00:00",
+  "first_date": "2021-10-11",
+  "last_date": "2026-10-09",
+  "tickers": [
+    "SPY",
+    "QQQ",
+    "DIA",
+    "IWM",
+    "EFA",
+    "EEM",
+    "TLT",
+    "GLD",
+    "USO",
+    "XLE",
+    "XLK",
+    "XLF",
+    "XLI",
+    "XLP",
+    "XLV",
+    "XLU",
+    "XLY",
+    "VNQ",
+    "HYG",
+    "LQD"
+  ],
+  "volatility_method": "standard deviation of daily log returns times sqrt(252)"
+}
