@@ -5,7 +5,7 @@
 - Bose Kaikini (Computer Science), individual project
   - Email: bkaikini@email.sc.edu
 
-## TODO
+## TODO (post progress check-in)
 1. Fine tune project hyperparameters
 2. Parallelize abd vectorize to reduce runtime beyond autograd
 3. Make project demo, reproducbility guide

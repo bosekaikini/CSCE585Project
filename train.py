@@ -43,6 +43,25 @@ def _payoff(strike: float, smooth: bool = False, width: float = 0.01):
     return payoff
 
 
+def _measure_inference_latency(model, x, repeats: int = 20, warmup: int = 5):
+    if not torch.is_tensor(x):
+        raise TypeError("x must be a torch tensor")
+    model.eval()
+    if x.device.type == "cuda":
+        torch.cuda.synchronize(x.device)
+    with torch.no_grad():
+        for _ in range(warmup):
+            model(x)
+        samples = []
+        for _ in range(repeats):
+            start = time.perf_counter()
+            model(x)
+            if x.device.type == "cuda":
+                torch.cuda.synchronize(x.device)
+            samples.append(time.perf_counter() - start)
+    return float(np.median(samples))
+
+
 def run_training(config: dict, seed: int, epochs: int | None = None) -> tuple[dict, list[dict]]:
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -89,6 +108,7 @@ def run_training(config: dict, seed: int, epochs: int | None = None) -> tuple[di
     ).requires_grad_(True)
     with torch.no_grad():
         prediction = model(eval_x).detach().cpu().numpy().reshape(-1)
+    inference_seconds = _measure_inference_latency(model, eval_x)
     mc_start = time.perf_counter()
     monte_carlo_call(spot, strike, maturity * 0.5, float(config["rate"]),
                      volatility, paths=10000, seed=seed)
@@ -110,7 +130,7 @@ def run_training(config: dict, seed: int, epochs: int | None = None) -> tuple[di
         ).hexdigest()[:12],
         "relative_l2": relative_l2(prediction, np.full_like(prediction, reference.item())),
         "runtime_seconds": elapsed, "runtime_per_epoch_seconds": elapsed / max(n_epochs, 1),
-        "inference_seconds": 0.0,
+        "inference_seconds": inference_seconds,
         "mc_runtime_seconds": mc_runtime, "fd_runtime_seconds": fd_runtime,
         "peak_vram_bytes": int(torch.cuda.max_memory_allocated(device)) if device.type == "cuda" else 0,
         "greek_delta_mean": float(greek_values["delta"].mean().cpu()),
